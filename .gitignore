@@ -1,0 +1,10 @@
+# VS Code Configs
+.vscode/*
+
+# Patch files
+*.rej
+*.orig
+
+# Python bytecodes
+__pycache__
+*.pyc
