@@ -14,7 +14,7 @@ Face_Recognition
   <code>$ pip install CMake</code>
   <code>$ pip install dlib</code>
   <code>$ pip install face_recognition</code>
-  <code>$ pip install pip install flask</code>
+  <code>$ pip install flask</code>
   </pre>
 
 
