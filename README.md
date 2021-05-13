@@ -5,13 +5,20 @@ Face_Recognition
 개발환경 구축
 ---------------------------------------------------
 - python3 version(Anaconda3 추천) 설치 필수
-- 필요 패키지 설치
-  - (https://ukayzm.github.io/python-face-recognition/) 참고
-  - dlib 라이브러리 설치 전에 Linux와 MacOS의 경우 CMake 설치 필요
-  <pre><code>pip install CMake</code></pre>
-  - dlib 라이브러리 설치 전에 Window의 경우 CMake 설치시 (https://ndb796.tistory.com/365) 참고
+- 패키지 설치 전 가상환경 생성 후 환경 분리 추천(Linux & Mac)
+- 필요 패키지 설치(Linux & Mac)
+  <pre>
+  <code>$ pip install --upgrade pip</code>
+  <code>$ pip install opencv-python</code>
+  <code>$ pip install opencv-contrib-python</code>
+  <code>$ pip install CMake</code>
+  <code>$ pip install dlib</code>
+  <code>$ pip install face_recognition</code>
+  <code>$ pip install pip install flask</code>
+  </pre>
 
-  
+
+
 Version1. 내용
 ---------------------------------------------------
 - knowns 폴더에 가족 구성원의 사진 파일을 저장함
