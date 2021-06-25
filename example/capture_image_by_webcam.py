@@ -1,9 +1,10 @@
 import cv2
+import time
+from find_faces_in_picture import save_faces_in_picture
 
 video_capture = cv2.VideoCapture(0)
 cv2.namedWindow("cam-test")
-
-img_counter = 0
+start_time = time.time()
 
 while True:
     ret, frame = video_capture.read()
@@ -13,18 +14,11 @@ while True:
 
     k = cv2.waitKey(1)
 
-    if k & 0xFF == ord('s'):  # s key pressed
-        img_name = "opencv_frame_{}.jpg".format(img_counter)
+    if time.time() - start_time >= 1:  # check if 1 sec passed
+        img_name = "opencv_img.jpg"
         cv2.imwrite(img_name, frame)  # frame: img
-        print("{} written!".format(img_name))  # print log
-        img_counter += 1
-
-        # 이미지 파일 이름을 JSON 형태로 작성
-        '''
-        data = {
-            "img_file_name": img_name
-        }
-        '''
+        save_faces_in_picture(img_name)
+        start_time = time.time()
 
     if k & 0xFF == ord('q'):
         break
