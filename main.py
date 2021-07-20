@@ -1,7 +1,7 @@
 import cv2
 import time
 from camera.capture_image_by_webcam import set_window_name, show_camera_frame, do_video_capture
-from service.save_faces_in_picture import save_faces_in_picture
+from camera.save_faces_in_picture import save_faces_in_picture
 
 video_capture = cv2.VideoCapture(0)
 window_name = "cam-test"
@@ -24,4 +24,3 @@ while True:
 
 video_capture.release()
 cv2.destroyAllWindows()
-
