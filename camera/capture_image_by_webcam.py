@@ -19,5 +19,8 @@ def do_video_capture(video_capture, window_name, save_img_name):
     if ret:
         cv2.imshow(window_name, frame)
 
-    img_name = save_img_name
-    cv2.imwrite(img_name, frame)  # frame: img
+    save_img(save_img_name, frame)
+
+
+def save_img(save_img_name, frame):
+    cv2.imwrite(save_img_name, frame)  # frame: img
