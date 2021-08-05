@@ -5,6 +5,7 @@ from camera import capture_image_by_webcam
 from face_detection import crop, user_identify, find_faces_in_picture
 from common import img_encoding, file_manipulation
 from service import categorization
+from service import emotion_detection
 
 video_capture = cv2.VideoCapture(0)  # 카메라 세팅
 window_name = "cam-test"  # 창 이름
@@ -37,6 +38,8 @@ while True:
             categorization.member_id_categorization(face_distances, known_img_list)  # 카메라에 촬영된 사람이 누구인지 판별하고 출력
 
             # 감정 인식 과정
+            # 'ANGRY', 'DISGUS', 'FEAR', 'HAPPY', 'NEUTRAL', 'SAD', 'SURPRISE' 중 7가지 감정 값 반환
+            emotion = emotion_detection(automatic_capture_img_name)
 
             # 이미지 crop 과정, 필요없을 시 생략 가능
             cropped_img_name = cropped_img_dir + current_time + "_crop" + save_img_ext
