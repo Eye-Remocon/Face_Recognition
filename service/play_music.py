@@ -1,4 +1,4 @@
-import os, random, pygame, keyboard
+import os, random, pygame
 
 # mp3 재생 설정
 freq = 16000    # frequency
