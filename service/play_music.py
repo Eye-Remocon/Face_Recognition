@@ -79,6 +79,3 @@ def music_play(emotion):
                 break
 
         pygame.mixer.quit()
-
-
-music_play("HAPPY")
