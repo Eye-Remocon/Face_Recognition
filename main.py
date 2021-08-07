@@ -15,6 +15,8 @@ automatic_capture_img_dir = "./img/"  # 1초 마다 촬영되는 사진이 저�
 cropped_img_dir = "./cropped_img/"  # crop된 이미지 저장 디렉터리
 known_img_dir = "./knowns"  # 이 서비스에 등록된 구성원의 사진이 저장되는 디렉터리
 save_img_ext = ".jpg"  # 이미지 확장자명
+key = 'http://0.0.0.0:9900'
+dest = os.getenv('ENV', key)
 
 # 서비스 가동 시작
 known_img_encodings = img_encoding.get_known_img_encodings(known_img_dir)  # knowns 폴더에 있는 모든 사진에 대하여 encoding 진행
@@ -38,8 +40,8 @@ while True:
             categorization.member_id_categorization(face_distances, known_img_list)  # 카메라에 촬영된 사람이 누구인지 판별하고 출력
 
             # 감정 인식 과정
-            # 'ANGRY', 'DISGUS', 'FEAR', 'HAPPY', 'NEUTRAL', 'SAD', 'SURPRISE' 중 7가지 감정 값 반환
-            emotion = emotion_detection(automatic_capture_img_name)
+            # 'ANGRY', 'DISGUST', 'FEAR', 'HAPPY', 'NEUTRAL', 'SAD', 'SURPRISE' 중 7가지 감정 값 반환
+            emotion = emotion_detection.get_emotion(automatic_capture_img_name, dest)
 
             # 이미지 crop 과정, 필요없을 시 생략 가능
             cropped_img_name = cropped_img_dir + current_time + "_crop" + save_img_ext
