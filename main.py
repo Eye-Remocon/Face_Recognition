@@ -15,7 +15,8 @@ cropped_img_dir = "./cropped_img/"  # crop된 이미지 저장 디렉터리
 known_img_dir = "./knowns"  # 이 서비스에 등록된 구성원의 사진이 저장되는 디렉터리
 save_img_ext = ".jpg"  # 이미지 확장자명
 
-dest = "http://0.0.0.0:9900"  # url
+key = 'http://0.0.0.0:9900'
+dest = os.getenv('ENV', key)
 
 # 서비스 가동 시작
 known_img_encodings = img_encoding.get_known_img_encodings(known_img_dir)  # knowns 폴더에 있는 모든 사진에 대하여 encoding 진행
