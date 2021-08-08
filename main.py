@@ -14,6 +14,8 @@ automatic_capture_img_dir = "./img/"  # 1초 마다 촬영되는 사진이 저�
 cropped_img_dir = "./cropped_img/"  # crop된 이미지 저장 디렉터리
 known_img_dir = "./knowns"  # 이 서비스에 등록된 구성원의 사진이 저장되는 디렉터리
 save_img_ext = ".jpg"  # 이미지 확장자명
+key = 'http://0.0.0.0:9900'
+dest = os.getenv('ENV', key)
 
 key = 'http://0.0.0.0:9900'
 dest = os.getenv('ENV', key)
