@@ -64,10 +64,14 @@ def select_music(emotion):
         print("Invalid argument. Parameter Name: emotion")
 
 
+def music_init():
+    pygame.mixer.init(freq, bitsize, channels, buffer)
+
+
 def music_play(emotion):
     if emotion in emotion_list:
         selected_music = select_music(emotion)
-        pygame.mixer.init(freq, bitsize, channels, buffer)
+        # pygame.mixer.init(freq, bitsize, channels, buffer)
         pygame.mixer.music.load(selected_music)
         pygame.mixer.music.play()
 
@@ -75,7 +79,7 @@ def music_play(emotion):
         while pygame.mixer.music.get_busy():  # 음악 재생
             clock.tick(60)
 
-            if pygame.mixer.music.get_pos() > 60000:  # 60초 지나면 음악이 멈춤
+            if pygame.mixer.music.get_pos() > 10000:  # 10초 지나면 음악이 멈춤
                 break
 
         pygame.mixer.quit()
