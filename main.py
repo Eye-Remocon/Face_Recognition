@@ -1,10 +1,8 @@
-import cv2
-import time
-import os
+import cv2, time, os, pygame
 from camera import capture_image_by_webcam
 from face_detection import crop, user_identify, find_faces_in_picture
 from common import img_encoding, file_manipulation
-from service import categorization, play_music, emotion_detection
+from service import categorization, emotion_detection, play_music
 
 video_capture = cv2.VideoCapture(0)  # 카메라 세팅
 window_name = "cam-test"  # 창 이름
@@ -14,8 +12,6 @@ automatic_capture_img_dir = "./img/"  # 1초 마다 촬영되는 사진이 저�
 cropped_img_dir = "./cropped_img/"  # crop된 이미지 저장 디렉터리
 known_img_dir = "./knowns"  # 이 서비스에 등록된 구성원의 사진이 저장되는 디렉터리
 save_img_ext = ".jpg"  # 이미지 확장자명
-key = 'http://0.0.0.0:9900'
-dest = os.getenv('ENV', key)
 
 key = 'http://0.0.0.0:9900'
 dest = os.getenv('ENV', key)
@@ -26,7 +22,6 @@ known_img_list = os.listdir(known_img_dir)  # knowns 폴더에 있는 모든 사
 # 나중에 카메라에서 촬영된 사진과 knowns에 있는 사진을 비교해서 등록된 사람인지 확인하는데 사용됨
 
 start_time = time.time()  # 타이머 작동 시(1초가 지나면 카메라 촬영)
-flag = False  # 음악 재생 플래그
 while True:
     capture_image_by_webcam.show_camera_frame(video_capture, window_name)  # 프레임 단위로 카메라 장면을 화면에 나타냄
     k = cv2.waitKey(1)
@@ -38,18 +33,18 @@ while True:
         # 방금 촬영한 사진과 knowns 폴더에 있난 사진과 비교 작업, 즉, face distance 측정
         face_distances = user_identify.get_face_distance(known_img_encodings, automatic_capture_img_name)
 
-        if (flag is False) and user_identify.is_registered(face_distances):  # 촬영된 사진에 있는 사람이 등록된 사람인지 확인
-            flag = True
+        if user_identify.is_registered(face_distances):  # 촬영된 사진에 있는 사람이 등록된 사람인지 확인
             # 만약 등록된 사람이라면
             categorization.member_id_categorization(face_distances, known_img_list)  # 카메라에 촬영된 사람이 누구인지 판별하고 출력
 
+            play_music.music_init()  # pygame mp3 설정, pygame.mixer.music.get_busy()를 호출하기 위해 필요
+
             # 감정 인식 과정
             # 'ANGRY', 'DISGUST', 'FEAR', 'HAPPY', 'NEUTRAL', 'SAD', 'SURPRISE' 중 7가지 감정 값 반환
-            emotion = emotion_detection.get_emotion(automatic_capture_img_name, dest)
-            print(emotion)
-
-            # 감정에 따른 음악 재생
-            play_music.music_play(emotion)
+            if pygame.mixer.music.get_busy() == 0:  # 음악이 재생되고 있지 않을 경우
+                emotion = emotion_detection.get_emotion(automatic_capture_img_name, dest)  # 감정 인식
+                print(emotion)
+                play_music.music_play(emotion)  # 감정에 맞는 음악 재생
 
             # 이미지 crop 과정, 필요없을 시 생략 가능
             cropped_img_name = cropped_img_dir + current_time + "_crop" + save_img_ext
@@ -63,3 +58,4 @@ while True:
 
 video_capture.release()
 cv2.destroyAllWindows()
+
