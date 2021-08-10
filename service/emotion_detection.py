@@ -7,7 +7,7 @@ def get_emotion(img_name, dest):
     with open(img_name, 'rb') as f:
         im_b64 = base64.b64encode(f.read())
 
-    # 이미지payload 형태로 만든 후flask 서버에post 요청
+    # 이미지 payload 형태로 만든 후 flask 서버에post 요청
     payload = {'image': im_b64}
     url = dest + '/main'
     r = requests.post(url, data=payload)
@@ -16,3 +16,4 @@ def get_emotion(img_name, dest):
     if r.ok:
         emotion = r.json()['emotion']
         return emotion
+
