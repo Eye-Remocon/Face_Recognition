@@ -71,7 +71,7 @@ def music_init():
 def music_play(emotion):
     if emotion in emotion_list:
         selected_music = select_music(emotion)
-        # pygame.mixer.init(freq, bitsize, channels, buffer)
+        pygame.mixer.init(freq, bitsize, channels, buffer)
         pygame.mixer.music.load(selected_music)
         pygame.mixer.music.play()
 
