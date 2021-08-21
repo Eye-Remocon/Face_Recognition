@@ -27,7 +27,7 @@ sad_music_list = os.listdir(sad_music_list_dir)
 surprised_music_list = os.listdir(surprised_music_list_dir)
 
 # 감정 리스트
-emotion_list = ['ANGRY', 'DISGUST', 'FEAR', 'HAPPY', 'NEUTRAL', 'SAD', 'SURPRISE', 'SURPRISED', 'CALM']
+emotion_list = ['ANGRY', 'DISGUST', 'DISGUSTED', 'CONFUSED', 'FEAR', 'HAPPY', 'NEUTRAL', 'SAD', 'SURPRISE', 'SURPRISED', 'CALM']
 
 
 # 감정에 따른 무작위 음악 선택
@@ -36,11 +36,11 @@ def select_music(emotion):
         selected_music = random.choice(angry_music_list)
         print(angry_music_list_dir + selected_music)
         return angry_music_list_dir + selected_music
-    elif emotion == "DISGUST":
+    elif emotion == "DISGUST" or emotion == "DISGUSTED":
         selected_music = random.choice(disgust_music_list)
         print(disgust_music_list_dir + selected_music)
         return disgust_music_list_dir + selected_music
-    elif emotion == "FEAR":
+    elif emotion == "FEAR" or emotion == "CONFUSED":
         selected_music = random.choice(fear_music_list)
         print(fear_music_list_dir + selected_music)
         return fear_music_list_dir + selected_music
