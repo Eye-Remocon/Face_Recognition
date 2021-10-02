@@ -6,6 +6,7 @@ from service import categorization, emotion_detection, play_music
 from multiprocessing import Process  # 멀티프로세싱 작업
 from service import taskoffloading
 from service import pose_detection
+from service import hw_request
 
 automatic_capture_img_dir = "./img/"  # 1초 마다 촬영되는 사진이 저장되는 디렉터리
 cropped_img_dir = "./cropped_img/"  # crop된 이미지 저장 디렉터리
@@ -51,6 +52,7 @@ def eye_remocon_service():
                     flag = False  # 음악 재생 플래그를 즉시 False로 바꾼다.
                     emotion = emotion_detection.get_emotion(automatic_capture_img_name, dest)  # 감정 인식
                     print(emotion)
+                    hw_request.emotion_request(emotion)
                     music_play_process = Process(target=play_music.music_start, args=(emotion, ))
                     music_play_process.start()
 
@@ -60,7 +62,8 @@ def eye_remocon_service():
                     if pose_detection.check(offloading_result): # ping-pong 성공(서버 살아있을 때)
                         pose = pose_detection.get_pose(automatic_capture_img_name, offloading_result)
                         print(pose)
-                        
+                        hw_request.pose_request(pose)
+
                 if flag is False and music_play_process.is_alive() is False:  # 음악 재생 플래그가 False이고 music_play_process가 종료되었을 경우
                     flag = True  # 음악 재생 플래그를 True로 바꾸고 다시 감정인식을 진행한다.
                 # 이미지 crop 과정, 필요없을 시 생략 가능
