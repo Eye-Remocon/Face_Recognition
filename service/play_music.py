@@ -68,7 +68,7 @@ def music_init():
     pygame.mixer.init(freq, bitsize, channels, buffer)
 
 
-def music_play(emotion):
+def music_start(emotion):
     if emotion in emotion_list:
         selected_music = select_music(emotion)
         pygame.mixer.init(freq, bitsize, channels, buffer)
