@@ -1,3 +1,5 @@
+#-*-coding: utf-8-*-
+#-*-coding: euc-kr-*-
 import requests
 
 payload = {
@@ -10,7 +12,7 @@ payload = {
 
 def home_edge():
     headers = {}
-    url = 'http://localhost:56001/api/v1/orchestration/services'
+    url = 'http://127.0.0.1:56001/api/v1/orchestration/services'
 
     r = requests.post(url, json=payload, headers=headers)
 

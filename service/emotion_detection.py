@@ -1,3 +1,5 @@
+#-*-coding: utf-8-*-
+#-*-coding: euc-kr-*-
 import requests
 import base64
 import json
