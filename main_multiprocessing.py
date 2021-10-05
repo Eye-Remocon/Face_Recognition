@@ -9,8 +9,6 @@ from multiprocessing import Process  # 멀티프로세싱 작업
 from service import taskoffloading
 from service import pose_detection
 from service import hw_request
-from time import sleep
-
 
 automatic_capture_img_dir = "./img/"  # 1초 마다 촬영되는 사진이 저장되는 디렉터리
 cropped_img_dir = "./cropped_img/"  # crop된 이미지 저장 디렉터리
