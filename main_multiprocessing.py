@@ -1,3 +1,5 @@
+#-*-coding: utf-8-*-
+#-*-coding: euc-kr-*-
 import cv2, time, os
 from camera import capture_image_by_webcam
 from face_detection import crop, user_identify, find_faces_in_picture
@@ -6,13 +8,16 @@ from service import categorization, emotion_detection, play_music
 from multiprocessing import Process  # 멀티프로세싱 작업
 from service import taskoffloading
 from service import pose_detection
+from service import hw_request
+from time import sleep
+
 
 automatic_capture_img_dir = "./img/"  # 1초 마다 촬영되는 사진이 저장되는 디렉터리
 cropped_img_dir = "./cropped_img/"  # crop된 이미지 저장 디렉터리
 known_img_dir = "./knowns"  # 이 서비스에 등록된 구성원의 사진이 저장되는 디렉터리
 save_img_ext = ".jpg"  # 이미지 확장자명
-
-key = 'http://0.0.0.0:9900'
+offloading_result = 'none'
+key = 'http://192.168.0.4:9900'
 dest = os.getenv('ENV', key)
 
 # 서비스 가동 시작
@@ -25,7 +30,7 @@ def eye_remocon_service():
     video_capture = cv2.VideoCapture(0)  # 카메라 세팅
     window_name = "cam-test"  # 창 이름
     capture_image_by_webcam.set_window_name(window_name)  # 창 이름 지정
-
+    offloading_result = 'none'
     flag = True  # 음악 재생 플래그. 만약 음악이 재생되고 있지 않을 경우 즉시 flag를 False로 바꾸고 음악이 끝날때까지 감정인식을 진행하지 않는다.
 
     start_time = time.time()  # 타이머 작동 시(1초가 지나면 카메라 촬영)
@@ -36,7 +41,7 @@ def eye_remocon_service():
         if time.time() - start_time >= 1:  # 1초마다
             current_time = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))  # 현재 시각을 문자열로 저장(예: 210819_122205)
             automatic_capture_img_name = automatic_capture_img_dir + current_time + save_img_ext  # 촬영될 이미지 파일 이름 지정
-            capture_image_by_webcam.do_video_capture(video_capture, automatic_capture_img_name)  # 카메라 촬영
+            capture_image_by_webcam.do_video_capture(video_capture, window_name, automatic_capture_img_name)  # 카메라 촬영
 
             # 방금 촬영한 사진과 knowns 폴더에 있난 사진과 비교 작업, 즉, face distance 측정
             face_distances = user_identify.get_face_distance(known_img_encodings, automatic_capture_img_name)
@@ -50,16 +55,24 @@ def eye_remocon_service():
                 if flag:  # 음악 재생 플래그가 True일 경우
                     flag = False  # 음악 재생 플래그를 즉시 False로 바꾼다.
                     emotion = emotion_detection.get_emotion(automatic_capture_img_name, dest)  # 감정 인식
-                    print(emotion)
+                    print('emotion detection : ', emotion)
+                    hw_request.emotion_request(emotion)
                     music_play_process = Process(target=play_music.music_start, args=(emotion, ))
                     music_play_process.start()
-
+                    
+                print(offloading_result)
                 # 행동 인식 과정(taskoffloading)
-                offloading_result = taskoffloading.home_edge()
+                if offloading_result == 'none':
+                    offloading_result = taskoffloading.home_edge()
+                    print('task offloading target : ', offloading_result)
+
+                        
                 if offloading_result != 'none':  # taskoffloading 에러 없을 시
                     if pose_detection.check(offloading_result): # ping-pong 성공(서버 살아있을 때)
                         pose = pose_detection.get_pose(automatic_capture_img_name, offloading_result)
-                        print(pose)
+                        hw_request.pose_request(pose)
+                        if pose != 'none':
+                            print('behavior detection : ', pose)
                         
                 if flag is False and music_play_process.is_alive() is False:  # 음악 재생 플래그가 False이고 music_play_process가 종료되었을 경우
                     flag = True  # 음악 재생 플래그를 True로 바꾸고 다시 감정인식을 진행한다.
