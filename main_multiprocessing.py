@@ -1,19 +1,22 @@
+#-*-coding: utf-8-*-
+#-*-coding: euc-kr-*-
 import cv2, time, os
 from camera import capture_image_by_webcam
 from face_detection import user_identify
 from common import img_encoding, file_manipulation
 from service import categorization, emotion_detection, play_music, taskoffloading, pose_detection, hw_request
-from multiprocessing import Process
+from multiprocessing import Process 
 
-automatic_capture_img_dir = "./img/"
-known_img_dir = "./knowns"
-save_img_ext = ".jpg"
+automatic_capture_img_dir = "./img/" # Directory where photos taken every second are stored
+known_img_dir = "./knowns" # Directory where photos of members registered in the service are stored
+save_img_ext = ".jpg" # image extensions
 
 offloading_result = 'none'
 key = 'http://127.0.0.1:9900'
 dest = os.getenv('ENV', key)
 
-known_img_encodings = img_encoding.get_known_img_encodings(known_img_dir)
+# Service start up
+known_img_encodings = img_encoding.get_known_img_encodings(known_img_dir) # encoding progress for all images in knowns directory
 known_img_list = os.listdir(known_img_dir)
 
 
