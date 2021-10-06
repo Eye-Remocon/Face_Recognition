@@ -1,4 +1,5 @@
-import os, random, pygame
+import os, random
+from pygame import mixer, time
 
 # mp3 재생 설정
 freq = 16000    # frequency
@@ -65,21 +66,40 @@ def select_music(emotion):
 
 
 def music_init():
-    pygame.mixer.init(freq, bitsize, channels, buffer)
+    # pygame.mixer.init(freq, bitsize, channels, buffer)
+    mixer.init(freq, bitsize, channels, buffer)
 
 
 def music_start(emotion):
     if emotion in emotion_list:
         selected_music = select_music(emotion)
-        pygame.mixer.init(freq, bitsize, channels, buffer)
-        pygame.mixer.music.load(selected_music)
-        pygame.mixer.music.play()
 
-        clock = pygame.time.Clock()
-        while pygame.mixer.music.get_busy():  # 음악 재생
+        mixer.init(freq, bitsize, channels, buffer)
+        mixer.music.load(selected_music)
+        mixer.music.play(0)
+
+        clock = time.Clock()
+
+        while mixer.music.get_busy():  # 음악 재생
             clock.tick(60)
 
-            if pygame.mixer.music.get_pos() > 10000:  # 10초 지나면 음악이 멈춤
+            if mixer.music.get_pos() > 10000:  # 10초 지나면 음악이 멈춤
                 break
 
-        pygame.mixer.quit()
+        mixer.quit()
+
+
+def emergency_siren():
+    mixer.init(freq, bitsize, channels, buffer)
+    mixer.music.load("./emergency_siren/Emergency_Siren.mp3")
+    mixer.music.play(0)
+
+    clock = time.Clock()
+
+    while mixer.music.get_busy():  # 사이렌 울림
+        clock.tick(60)
+
+        if mixer.music.get_pos() > 10000:  # 10초 지나면 사이렌 종료
+            break
+
+    mixer.quit()
