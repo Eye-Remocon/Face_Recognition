@@ -34,10 +34,10 @@ def eye_remocon_service():
         capture_image_by_webcam.show_camera_frame(video_capture, window_name)
         k = cv2.waitKey(1)
         
-        if time.time() - start_time >= 1:
-            current_time = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))
-            automatic_capture_img_name = automatic_capture_img_dir + current_time + save_img_ext
-            capture_image_by_webcam.do_video_capture(video_capture, automatic_capture_img_name)
+        if time.time() - start_time >= 1:  # 1초마다
+            current_time = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))  # 현재 시각을 문자열로 저장(예: 210819_122205)
+            automatic_capture_img_name = automatic_capture_img_dir + current_time + save_img_ext  # 촬영될 이미지 파일 이름 지정
+            capture_image_by_webcam.do_video_capture(video_capture, window_name, automatic_capture_img_name)  # 카메라 촬영
 
             face_distances = user_identify.get_face_distance(known_img_encodings, automatic_capture_img_name)
             
@@ -54,7 +54,6 @@ def eye_remocon_service():
                     music_play_process.start()
                     
                 print(offloading_result)
-                
                 # 행동 인식 과정(taskoffloading)
                 if offloading_result == 'none':
                     offloading_result = taskoffloading.home_edge()
