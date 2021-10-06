@@ -12,7 +12,7 @@ known_img_dir = "./knowns" # Directory where photos of members registered in the
 save_img_ext = ".jpg" # image extensions
 
 offloading_result = 'none'
-key = 'http://127.0.0.1:9900'
+key = 'http://192.168.0.4:9900'
 dest = os.getenv('ENV', key)
 
 # Service start up
