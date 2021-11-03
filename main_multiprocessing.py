@@ -4,7 +4,7 @@ import cv2, time, os
 from camera import capture_image_by_webcam
 from face_detection import user_identify
 from common import img_encoding, file_manipulation
-from service import categorization, emotion_detection, play_music, taskoffloading, pose_detection, hw_request
+from service import categorization, emotion_detection, play_music, taskoffloading, pose_detection, hw_request, noti_email
 from multiprocessing import Process 
 
 automatic_capture_img_dir = "./img/" # Directory where photos taken every second are stored
@@ -12,12 +12,14 @@ known_img_dir = "./knowns" # Directory where photos of members registered in the
 save_img_ext = ".jpg" # image extensions
 
 offloading_result = 'none'
-key = 'http://192.168.0.4:9900'
+key = 'http://192.168.180.128:9900'
 dest = os.getenv('ENV', key)
 
 # Service start up
 known_img_encodings = img_encoding.get_known_img_encodings(known_img_dir) # encoding progress for all images in knowns directory
 known_img_list = os.listdir(known_img_dir)
+
+noti_email_term = 300 # when pose detection result is 'emergency', email will be send every 300 seconds.
 
 
 def eye_remocon_service():
@@ -30,14 +32,16 @@ def eye_remocon_service():
     siren_flag = False # True when siren sounds, False when siren doesn't sound.
 
     start_time = time.time()
+    emergency_time = 0
+    
     while True:
         capture_image_by_webcam.show_camera_frame(video_capture, window_name)
         k = cv2.waitKey(1)
         
-        if time.time() - start_time >= 1:  # 1초마다
-            current_time = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))  # 현재 시각을 문자열로 저장(예: 210819_122205)
-            automatic_capture_img_name = automatic_capture_img_dir + current_time + save_img_ext  # 촬영될 이미지 파일 이름 지정
-            capture_image_by_webcam.do_video_capture(video_capture, window_name, automatic_capture_img_name)  # 카메라 촬영
+        if time.time() - start_time >= 1: # every 1 second passed
+            current_time = time.strftime('%y%m%d_%H%M%S', time.localtime(time.time()))
+            automatic_capture_img_name = automatic_capture_img_dir + current_time + save_img_ext
+            capture_image_by_webcam.do_video_capture(video_capture, automatic_capture_img_name)
 
             face_distances = user_identify.get_face_distance(known_img_encodings, automatic_capture_img_name)
             
@@ -53,7 +57,6 @@ def eye_remocon_service():
                     music_play_process = Process(target=play_music.music_start, args=(emotion, ))
                     music_play_process.start()
                     
-                print(offloading_result)
                 # 행동 인식 과정(taskoffloading)
                 if offloading_result == 'none':
                     offloading_result = taskoffloading.home_edge()
@@ -63,19 +66,25 @@ def eye_remocon_service():
                     if pose_detection.check(offloading_result): # ping-pong success(Server is activate)
                         pose = pose_detection.get_pose(automatic_capture_img_name, offloading_result)
                         hw_request.pose_request(pose)
-                        if pose != 'none':
-                            print('behavior detection : ', pose)
+                        if pose != 'none':  
                             if pose == 'emergency' and not siren_flag:
+                                print('behavior detection: ', pose)
                                 siren_flag = True
                                 siren_play_process = Process(target=play_music.emergency_siren)
                                 music_play_process.terminate()
                                 time.sleep(1)
                                 siren_play_process.start()
+                                
+                                # noti email process
+                                if time.time() - emergency_time > noti_email_term:
+                                    # print("noti send")
+                                    noti_email.send_email()
+                                    emergency_time = time.time()
                             
                 if not music_flag and music_play_process.is_alive() is False:
                     music_flag = True
                     music_play_process.terminate()
-
+                    
                 if siren_flag and siren_play_process.is_alive() is False:
                     siren_flag = False
                     siren_play_process.terminate()
